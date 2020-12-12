@@ -1,9 +1,9 @@
-use crossbeam_channel::{unbounded, Sender, Receiver};
+use crossbeam_channel::{unbounded, Receiver, Sender};
 use pb::ProgressBar;
 use std::io::{Result, Stdout, Write};
 use std::str::from_utf8;
-use std::sync::Mutex;
 use std::sync::atomic::{AtomicUsize, Ordering};
+use std::sync::Mutex;
 use tty::move_cursor_up;
 
 pub struct MultiBar<T: Write> {
@@ -15,7 +15,7 @@ pub struct MultiBar<T: Write> {
 struct State<T: Write> {
     lines: Vec<String>,
     nlines: usize,
-    handle: T
+    handle: T,
 }
 
 impl MultiBar<Stdout> {
@@ -156,7 +156,7 @@ impl<T: Write> MultiBar<T> {
     /// ```
     pub fn create_bar(&self, total: u64) -> ProgressBar<Pipe> {
         let mut state = self.state.lock().unwrap();
-        
+
         state.lines.push(String::new());
         state.nlines += 1;
 
@@ -169,9 +169,8 @@ impl<T: Write> MultiBar<T> {
             },
             total,
         );
-        
+
         p.is_multibar = true;
-        p.add(0);
         p
     }
 
